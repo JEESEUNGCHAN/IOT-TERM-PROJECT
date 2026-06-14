@@ -13,6 +13,7 @@ from modules.dht_sensor    import DHTSensor
 from modules.lcd_display   import LCDDisplay
 from modules.yolo_detector import WasteDetector
 from modules.servo_control import ServoController
+from modules.mqtt_client   import MQTTClient
 
 
 class SmartRecyclingSystem:
@@ -23,6 +24,7 @@ class SmartRecyclingSystem:
         self.lcd        = LCDDisplay()
         self.detector   = WasteDetector()
         self.servo      = ServoController()
+        self.mqtt       = MQTTClient()
 
         self._last_env_time = 0.0
         self._running       = True
@@ -71,6 +73,7 @@ class SmartRecyclingSystem:
             return
 
         print(f"[Detection] {info['label']} ({result['confidence']:.0%})")
+        self.mqtt.publish_detection(category, info["label"], result["confidence"])
         self.lcd.show_detection(info["label"], info["tip"])
         print("[Servo] Opening lid in 3s...")
         time.sleep(3)
@@ -89,6 +92,7 @@ class SmartRecyclingSystem:
             return
 
         print(f"[ENV] {temp}C  {hum}%  -> {status}")
+        self.mqtt.publish_environment(temp, hum, status)
         self.lcd.show_environment(temp, hum)
         time.sleep(3)
         self.lcd.show_idle()
@@ -102,6 +106,7 @@ class SmartRecyclingSystem:
         self.detector.cleanup()
         self.lcd.cleanup()
         self.dht.cleanup()
+        self.mqtt.cleanup()
         GPIO.cleanup()
         sys.exit(0)
 
