@@ -1,3 +1,4 @@
+import os
 import cv2
 import time
 from ultralytics import YOLO
@@ -6,7 +7,10 @@ from config import MODEL_PATH, CONFIDENCE, FRAME_WIDTH, FRAME_HEIGHT, CAMERA_IND
 
 class WasteDetector:
     def __init__(self):
-        self._model  = YOLO(MODEL_PATH)
+        # Use fine-tuned model if available, otherwise fall back to COCO pre-trained
+        model_file = MODEL_PATH if os.path.exists(MODEL_PATH) else "yolov8n.pt"
+        print(f"[YOLO] Loading model: {model_file}")
+        self._model  = YOLO(model_file)
         self._cap    = cv2.VideoCapture(CAMERA_INDEX)
         self._cap.set(cv2.CAP_PROP_FRAME_WIDTH,  FRAME_WIDTH)
         self._cap.set(cv2.CAP_PROP_FRAME_HEIGHT, FRAME_HEIGHT)
