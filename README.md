@@ -9,7 +9,7 @@ Gachon University, School of Computing | Prof. Jaehyuk Choi | Spring 2026
 
 A low-cost, edge-AI recycling assistant built on **Raspberry Pi 5**.  
 When a user approaches the bin, the system wakes, classifies the waste with **YOLOv8**, displays disposal instructions on an **LCD**, and automatically opens the bin lid via a **servo motor**.  
-During standby, a **DHT22** sensor continuously tracks temperature and humidity for bin sanitation monitoring.
+During standby, a **SHT30** sensor continuously tracks temperature and humidity for bin sanitation monitoring.
 
 ---
 
