@@ -7,8 +7,8 @@ Gachon University, School of Computing | Prof. Jaehyuk Choi | Spring 2026
 
 ## Overview
 
-A low-cost, edge-AI recycling assistant built on **Raspberry Pi 4/5**.  
-When a user approaches the bin, the system wakes, classifies the waste with **YOLOv8**, displays disposal instructions on an **LCD**, and automatically opens the correct bin lid via a **servo motor**.  
+A low-cost, edge-AI recycling assistant built on **Raspberry Pi 5**.  
+When a user approaches the bin, the system wakes, classifies the waste with **YOLOv8**, displays disposal instructions on an **LCD**, and automatically opens the bin lid via a **servo motor**.  
 During standby, a **DHT22** sensor continuously tracks temperature and humidity for bin sanitation monitoring.
 
 ---
@@ -23,15 +23,14 @@ Ultrasonic Sensor ──► Camera (YOLO Inference)
                               │
                               ▼
                     Waste Category Decision
-                    ┌──────────────────────┐
-                    │ plastic / can / paper │
-                    │ glass / food / general│
-                    └──────────────────────┘
+                    ┌─────────────────────┐
+                    │ plastic / can / paper│
+                    └─────────────────────┘
                               │
-              ┌───────────────┼───────────────┐
-              ▼               ▼               ▼
-         LCD Display     Servo Motor    Cloud Logger
-        (Instructions)  (Open Lid)   (Google Sheets)
+                 ┌────────────┴────────────┐
+                 ▼                         ▼
+          LCD Display               Servo Motor
+         (Instructions)             (Open Lid)
 ```
 
 ---
@@ -40,12 +39,12 @@ Ultrasonic Sensor ──► Camera (YOLO Inference)
 
 | Component | Purpose |
 |-----------|---------|
-| Raspberry Pi 4/5 | Edge computing hub |
+| Raspberry Pi 5 | Edge computing hub |
 | Pi Camera / USB Camera | YOLO image capture |
-| HC-SR04 Ultrasonic | User proximity detection & fill-level |
+| HC-SR04 Ultrasonic | User proximity detection |
 | DHT22 | Temperature & humidity (sanitation) |
 | I2C LCD 16×2 | Disposal instructions display |
-| SG90 Servo × 6 | Automatic bin lid control |
+| SG90 Servo × 1 | Automatic bin lid control |
 
 ### GPIO Wiring
 
@@ -55,30 +54,31 @@ Ultrasonic Sensor ──► Camera (YOLO Inference)
 | Ultrasonic ECHO | 24 |
 | DHT22 DATA | 4 |
 | Servo (auto-lid) | 17 |
-| LCD SDA | GPIO2 (I2C) |
-| LCD SCL | GPIO3 (I2C) |
+| LCD SDA | GPIO 2 (I2C) |
+| LCD SCL | GPIO 3 (I2C) |
+
+> **주의**: 초음파 ECHO 핀은 5V 출력 → GPIO 24에 직접 연결 금지.
+> 1kΩ + 2kΩ 분압 저항 사용 필수.
 
 ---
 
 ## Software Setup
 
 ```bash
-# 1. Clone the repository
+# 1. lgpio 시스템 패키지 설치 (RPi 5 필수)
+sudo apt install -y python3-lgpio lgpio
+
+# 2. 코드 받기
 git clone https://github.com/JEESEUNGCHAN/IOT-TERM-PROJECT.git
 cd IOT-TERM-PROJECT
 
-# 2. Install dependencies
+# 3. Python 패키지 설치
 pip install -r requirements.txt
 
-# 3. Place YOLO model
-cp /path/to/waste_yolov8n.pt models/
+# 4. I2C LCD 주소 확인 (0x27 이어야 함)
+sudo i2cdetect -y 1
 
-# 4. (Optional) Cloud logging — add credentials.json for Google Sheets
-#    Set Telegram bot tokens for mobile notifications:
-export TELEGRAM_BOT_TOKEN="your_token"
-export TELEGRAM_CHAT_ID="your_chat_id"
-
-# 5. Run
+# 5. 실행
 python main.py
 ```
 
@@ -92,11 +92,11 @@ IOT-TERM-PROJECT/
 ├── config.py                # GPIO pins, thresholds, waste info
 ├── requirements.txt
 ├── modules/
-│   ├── ultrasonic.py        # Proximity & fill-level sensing
-│   ├── dht_sensor.py        # Temperature/humidity monitoring
+│   ├── ultrasonic.py        # Proximity sensing (HC-SR04)
+│   ├── dht_sensor.py        # Temperature/humidity (DHT22)
 │   ├── lcd_display.py       # I2C LCD controller
 │   ├── yolo_detector.py     # YOLOv8 waste classification
-│   └── servo_control.py     # Automatic lid actuation
+│   └── servo_control.py     # Automatic lid actuation (SG90)
 ├── models/                  # YOLO model weights (.pt)
 └── data/                    # Supplementary datasets
 ```
@@ -107,16 +107,13 @@ IOT-TERM-PROJECT/
 
 **Active Mode** (user present)
 1. Ultrasonic sensor detects approach within 40 cm
-2. Camera captures frame → YOLOv8 inference
-3. Category voted across 3 frames for stability
-4. LCD shows item name + disposal tip
-5. Servo opens the matched bin lid for 5 seconds
-6. Detection logged to CSV and Google Sheets
+2. Camera captures frame → YOLOv8 inference (3-frame vote)
+3. LCD shows item name + disposal tip
+4. Servo opens bin lid for 5 seconds then closes
 
 **Idle Mode** (no user)
 1. DHT22 measures temperature & humidity every 30 seconds
 2. LCD briefly shows environment status
-3. If temp > 35°C or humidity > 80%, Telegram alert is sent
 
 ---
 
@@ -124,17 +121,14 @@ IOT-TERM-PROJECT/
 
 | Feature | Description |
 |---------|-------------|
-| Auto-Lid Control | SG90 servo opens the correct bin automatically |
+| Auto-Lid Control | SG90 servo opens the bin lid automatically upon detection |
 
 ---
 
 ## Waste Categories
 
-| Category | Bin Color | Disposal Tip |
-|----------|-----------|--------------|
-| Plastic | Blue | Remove cap & label |
-| Can / Metal | Red | Rinse before dispose |
-| Paper | Yellow | Keep dry & flat |
-| Glass | Green | Wrap if broken |
-| Food Waste | Brown | Drain liquid first |
-| General | Grey | Non-recyclable |
+| Category | Disposal Tip |
+|----------|--------------|
+| Plastic | Remove cap & label |
+| Can / Metal | Rinse before dispose |
+| Paper | Keep dry & flat |
