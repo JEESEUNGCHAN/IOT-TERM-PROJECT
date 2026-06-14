@@ -101,11 +101,8 @@ IOT-TERM-PROJECT/
 │   ├── dht_sensor.py        # Temperature/humidity monitoring
 │   ├── lcd_display.py       # I2C LCD controller
 │   ├── yolo_detector.py     # YOLOv8 waste classification
-│   ├── servo_control.py     # Automatic lid actuation
-│   ├── cloud_logger.py      # Google Sheets + local CSV logging
-│   └── notifier.py          # Telegram mobile notifications
+│   └── servo_control.py     # Automatic lid actuation
 ├── models/                  # YOLO model weights (.pt)
-├── logs/                    # Local detection CSV logs
 └── data/                    # Supplementary datasets
 ```
 
@@ -133,8 +130,6 @@ IOT-TERM-PROJECT/
 | Feature | Description |
 |---------|-------------|
 | Auto-Lid Control | SG90 servo opens the correct bin automatically |
-| Cloud Dashboard | Detections synced to Google Sheets in real time |
-| Mobile Notifications | Telegram alerts for full bins and hygiene warnings |
 
 ---
 

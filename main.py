@@ -5,16 +5,13 @@ import sys
 from config import (
     PROXIMITY_THRESHOLD_CM,
     IDLE_MEASURE_INTERVAL,
-    BIN_FULL_THRESHOLD_CM,
     WASTE_INFO,
 )
-from modules.ultrasonic  import UltrasonicSensor
-from modules.dht_sensor  import DHTSensor
-from modules.lcd_display import LCDDisplay
+from modules.ultrasonic    import UltrasonicSensor
+from modules.dht_sensor    import DHTSensor
+from modules.lcd_display   import LCDDisplay
 from modules.yolo_detector import WasteDetector
 from modules.servo_control import ServoController
-from modules.cloud_logger  import CloudLogger
-from modules.notifier      import notify_bin_full, notify_sanitation_warning
 
 
 class SmartRecyclingSystem:
@@ -25,7 +22,6 @@ class SmartRecyclingSystem:
         self.lcd        = LCDDisplay()
         self.detector   = WasteDetector()
         self.servo      = ServoController()
-        self.logger     = CloudLogger(use_cloud=True)
 
         self._last_env_time = 0.0
         self._running       = True
@@ -34,25 +30,21 @@ class SmartRecyclingSystem:
         signal.signal(signal.SIGTERM, self._shutdown)
         print("[System] Ready.")
 
-    # ------------------------------------------------------------------
     def run(self):
         self.lcd.show_idle()
 
         while self._running:
-            # --- Idle: periodic environment monitoring ---
             now = time.time()
             if now - self._last_env_time >= IDLE_MEASURE_INTERVAL:
                 self._monitor_environment()
                 self._last_env_time = now
 
-            # --- Check for user approach ---
             distance = self.ultrasonic.measure_cm()
             if distance <= PROXIMITY_THRESHOLD_CM:
                 self._handle_waste_event()
 
             time.sleep(0.2)
 
-    # ------------------------------------------------------------------
     def _handle_waste_event(self):
         self.lcd.show("Scanning...", "Hold item still")
         print("[Detection] Object detected, running YOLO...")
@@ -69,26 +61,12 @@ class SmartRecyclingSystem:
         info     = WASTE_INFO.get(category, WASTE_INFO["general"])
 
         print(f"[Detection] {info['label']} ({result['confidence']:.0%})")
-
         self.lcd.show_detection(info["label"], info["tip"])
         self.servo.open_lid(category, hold_sec=5.0)
-
-        fill = self.ultrasonic.get_fill_level_pct()
-        if fill >= 90:
-            self.lcd.show_bin_full(info["label"])
-            notify_bin_full(category, fill)
-
-        self.logger.log(
-            category=category,
-            raw_class=result["raw_class"],
-            confidence=result["confidence"],
-            fill_pct=fill,
-        )
 
         time.sleep(3)
         self.lcd.show_idle()
 
-    # ------------------------------------------------------------------
     def _monitor_environment(self):
         data   = self.dht.read()
         status = self.dht.sanitation_status()
@@ -101,15 +79,10 @@ class SmartRecyclingSystem:
 
         print(f"[ENV] {temp}C  {hum}%  → {status}")
         self.lcd.show_environment(temp, hum)
-        self.logger.log_environment(temp, hum)
-
-        if status == "WARNING":
-            notify_sanitation_warning(temp, hum)
 
         time.sleep(3)
         self.lcd.show_idle()
 
-    # ------------------------------------------------------------------
     def _shutdown(self, *_):
         print("\n[System] Shutting down...")
         self._running = False
