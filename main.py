@@ -1,6 +1,7 @@
 import time
 import signal
 import sys
+import RPi.GPIO as GPIO
 
 from config import (
     PROXIMITY_THRESHOLD_CM,
@@ -58,7 +59,13 @@ class SmartRecyclingSystem:
             return
 
         category = result["category"]
-        info     = WASTE_INFO.get(category, WASTE_INFO["general"])
+        info     = WASTE_INFO.get(category)
+
+        if info is None:
+            self.lcd.show("Unknown item", "Try again")
+            time.sleep(2)
+            self.lcd.show_idle()
+            return
 
         print(f"[Detection] {info['label']} ({result['confidence']:.0%})")
         self.lcd.show_detection(info["label"], info["tip"])
@@ -69,7 +76,7 @@ class SmartRecyclingSystem:
 
     def _monitor_environment(self):
         data   = self.dht.read()
-        status = self.dht.sanitation_status()
+        status = self.dht.sanitation_status(data)
 
         temp = data["temperature_c"]
         hum  = data["humidity_pct"]
@@ -77,9 +84,8 @@ class SmartRecyclingSystem:
         if temp is None:
             return
 
-        print(f"[ENV] {temp}C  {hum}%  → {status}")
+        print(f"[ENV] {temp}C  {hum}%  -> {status}")
         self.lcd.show_environment(temp, hum)
-
         time.sleep(3)
         self.lcd.show_idle()
 
@@ -92,6 +98,7 @@ class SmartRecyclingSystem:
         self.detector.cleanup()
         self.lcd.cleanup()
         self.dht.cleanup()
+        GPIO.cleanup()
         sys.exit(0)
 
 

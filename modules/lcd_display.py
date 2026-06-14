@@ -34,15 +34,5 @@ class LCDDisplay:
     def show_idle(self):
         self.show("SmartRecycle", "Ready...")
 
-    def show_bin_full(self, category: str):
-        self.show(f"{category[:8]} BIN FULL", "Call staff!")
-
-    def scroll_message(self, message: str, delay: float = 0.4):
-        padded = " " * LCD_COLS + message + " " * LCD_COLS
-        for i in range(len(padded) - LCD_COLS + 1):
-            self._lcd.clear()
-            self._lcd.write_string(padded[i:i + LCD_COLS])
-            time.sleep(delay)
-
     def cleanup(self):
         self.clear()

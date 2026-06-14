@@ -8,6 +8,7 @@ CLOSE_DUTY = 2.5   # ~0 degrees
 
 class ServoController:
     def __init__(self):
+        GPIO.setwarnings(False)
         GPIO.setmode(GPIO.BCM)
         GPIO.setup(SERVO_PIN, GPIO.OUT)
         self._pwm = GPIO.PWM(SERVO_PIN, 50)
@@ -29,4 +30,3 @@ class ServoController:
     def cleanup(self):
         self._close_lid()
         self._pwm.stop()
-        GPIO.cleanup()

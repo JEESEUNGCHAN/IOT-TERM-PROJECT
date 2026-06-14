@@ -3,16 +3,17 @@ import adafruit_dht
 import board
 from config import DHT_PIN
 
+_PIN_MAP = {
+    4:  board.D4,
+    17: board.D17,
+    18: board.D18,
+    27: board.D27,
+}
+
 
 class DHTSensor:
     def __init__(self):
-        pin_map = {
-            4:  board.D4,
-            17: board.D17,
-            18: board.D18,
-            27: board.D27,
-        }
-        self._device = adafruit_dht.DHT22(pin_map.get(DHT_PIN, board.D4))
+        self._device = adafruit_dht.DHT22(_PIN_MAP.get(DHT_PIN, board.D4))
 
     def read(self) -> dict:
         for _ in range(3):
@@ -29,8 +30,7 @@ class DHTSensor:
                 time.sleep(2)
         return {"temperature_c": None, "humidity_pct": None, "timestamp": None}
 
-    def sanitation_status(self) -> str:
-        data = self.read()
+    def sanitation_status(self, data: dict) -> str:
         if data["temperature_c"] is None:
             return "UNKNOWN"
         if data["temperature_c"] > 35 or data["humidity_pct"] > 80:

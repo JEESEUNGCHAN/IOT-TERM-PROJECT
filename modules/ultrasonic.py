@@ -2,9 +2,12 @@ import time
 import RPi.GPIO as GPIO
 from config import ULTRASONIC_TRIG, ULTRASONIC_ECHO
 
+TIMEOUT = 0.04   # 40ms → ~6.8m max range
+
 
 class UltrasonicSensor:
     def __init__(self):
+        GPIO.setwarnings(False)
         GPIO.setmode(GPIO.BCM)
         GPIO.setup(ULTRASONIC_TRIG, GPIO.OUT)
         GPIO.setup(ULTRASONIC_ECHO, GPIO.IN)
@@ -16,25 +19,22 @@ class UltrasonicSensor:
         time.sleep(0.00001)
         GPIO.output(ULTRASONIC_TRIG, False)
 
+        deadline = time.time() + TIMEOUT
         start = time.time()
         while GPIO.input(ULTRASONIC_ECHO) == 0:
             start = time.time()
+            if time.time() > deadline:
+                return 999.0
 
+        deadline = time.time() + TIMEOUT
         stop = time.time()
         while GPIO.input(ULTRASONIC_ECHO) == 1:
             stop = time.time()
+            if time.time() > deadline:
+                return 999.0
 
-        elapsed = stop - start
-        distance = (elapsed * 34300) / 2
+        distance = ((stop - start) * 34300) / 2
         return round(distance, 2)
 
     def is_object_present(self, threshold_cm: float) -> bool:
         return self.measure_cm() <= threshold_cm
-
-    def get_fill_level_pct(self, bin_depth_cm: float = 40.0) -> int:
-        dist = self.measure_cm()
-        pct = max(0, min(100, int((1 - dist / bin_depth_cm) * 100)))
-        return pct
-
-    def cleanup(self):
-        GPIO.cleanup()
