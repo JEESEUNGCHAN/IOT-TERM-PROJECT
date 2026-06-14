@@ -20,7 +20,7 @@ class WasteDetector:
         for key, category in YOLO_CLASS_MAP.items():
             if key in name:
                 return category
-        return "plastic"   # default if class not in map
+        return None
 
     def capture_frame(self):
         ret, frame = self._cap.read()
@@ -37,14 +37,17 @@ class WasteDetector:
         best_conf = 0.0
         for r in results:
             for box in r.boxes:
-                conf  = float(box.conf[0])
-                cls   = int(box.cls[0])
-                label = self._model.names[cls]
+                conf     = float(box.conf[0])
+                cls      = int(box.cls[0])
+                label    = self._model.names[cls]
+                category = self._map_class(label)
+                if category is None:
+                    continue                 # skip classes outside our 3 categories
                 if conf > best_conf:
                     best_conf = conf
                     best = {
-                        "raw_class": label,
-                        "category":  self._map_class(label),
+                        "raw_class":  label,
+                        "category":   category,
                         "confidence": round(conf, 3),
                         "timestamp":  time.strftime("%Y-%m-%d %H:%M:%S"),
                         "frame":      frame,
@@ -56,7 +59,7 @@ class WasteDetector:
         last: dict | None = None
         for _ in range(samples):
             result = self.detect()
-            if result:
+            if result and result["category"]:
                 cat = result["category"]
                 votes[cat] = votes.get(cat, 0) + 1
                 last = result
