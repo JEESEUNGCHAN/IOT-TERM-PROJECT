@@ -1,8 +1,8 @@
 # GPIO Pin Configuration
 ULTRASONIC_TRIG = 23
 ULTRASONIC_ECHO = 24
-DHT_PIN         = 4
 SERVO_PIN       = 17    # single servo for auto-lid demo
+# SHT30 uses I2C (GPIO 2/3) shared with LCD — no extra pin needed
 
 # System Thresholds
 PROXIMITY_THRESHOLD_CM = 40

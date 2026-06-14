@@ -1,34 +1,25 @@
 import time
-import adafruit_dht
 import board
-from config import DHT_PIN
-
-_PIN_MAP = {
-    4:  board.D4,
-    17: board.D17,
-    18: board.D18,
-    27: board.D27,
-}
+import busio
+import adafruit_sht31d
 
 
 class DHTSensor:
     def __init__(self):
-        self._device = adafruit_dht.DHT22(_PIN_MAP.get(DHT_PIN, board.D4))
+        i2c = busio.I2C(board.SCL, board.SDA)
+        self._device = adafruit_sht31d.SHT31D(i2c)
 
     def read(self) -> dict:
-        for _ in range(3):
-            try:
-                temp = self._device.temperature
-                hum  = self._device.humidity
-                if temp is not None and hum is not None:
-                    return {
-                        "temperature_c": round(temp, 1),
-                        "humidity_pct":  round(hum, 1),
-                        "timestamp":     time.strftime("%Y-%m-%d %H:%M:%S"),
-                    }
-            except RuntimeError:
-                time.sleep(2)
-        return {"temperature_c": None, "humidity_pct": None, "timestamp": None}
+        try:
+            temp = round(self._device.temperature, 1)
+            hum  = round(self._device.relative_humidity, 1)
+            return {
+                "temperature_c": temp,
+                "humidity_pct":  hum,
+                "timestamp":     time.strftime("%Y-%m-%d %H:%M:%S"),
+            }
+        except Exception:
+            return {"temperature_c": None, "humidity_pct": None, "timestamp": None}
 
     def sanitation_status(self, data: dict) -> str:
         if data["temperature_c"] is None:
@@ -40,4 +31,4 @@ class DHTSensor:
         return "NORMAL"
 
     def cleanup(self):
-        self._device.exit()
+        pass

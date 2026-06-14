@@ -42,7 +42,7 @@ Ultrasonic Sensor ──► Camera (YOLO Inference)
 | Raspberry Pi 5 | Edge computing hub |
 | Pi Camera / USB Camera | YOLO image capture |
 | HC-SR04 Ultrasonic | User proximity detection |
-| DHT22 | Temperature & humidity (sanitation) |
+| SHT30 | Temperature & humidity (sanitation) |
 | I2C LCD 16×2 | Disposal instructions display |
 | SG90 Servo × 1 | Automatic bin lid control |
 
@@ -52,10 +52,11 @@ Ultrasonic Sensor ──► Camera (YOLO Inference)
 |--------|-----------|
 | Ultrasonic TRIG | 23 |
 | Ultrasonic ECHO | 24 |
-| DHT22 DATA | 4 |
 | Servo (auto-lid) | 17 |
 | LCD SDA | GPIO 2 (I2C) |
 | LCD SCL | GPIO 3 (I2C) |
+| SHT30 SDA | GPIO 2 (I2C, LCD와 공유) |
+| SHT30 SCL | GPIO 3 (I2C, LCD와 공유) |
 
 > **주의**: 초음파 ECHO 핀은 5V 출력 → GPIO 24에 직접 연결 금지.
 > 1kΩ + 2kΩ 분압 저항 사용 필수.
