@@ -10,7 +10,7 @@ IDLE_MEASURE_INTERVAL  = 30
 
 # YOLO
 MODEL_PATH   = "models/waste_yolov8n.pt"
-CONFIDENCE   = 0.45
+CONFIDENCE   = 0.3
 FRAME_WIDTH  = 640
 FRAME_HEIGHT = 480
 CAMERA_INDEX = 1
@@ -42,6 +42,8 @@ YOLO_CLASS_MAP = {
     "pet bottle":   "plastic",
     "can":          "can",
     "tin can":      "can",
+    "cup":          "can",
+    "vase":         "can",
     "cardboard":    "paper",
     "newspaper":    "paper",
     "paper":        "paper",
