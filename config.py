@@ -1,6 +1,6 @@
 # GPIO Pin Configuration
-ULTRASONIC_TRIG = 23
-ULTRASONIC_ECHO = 24
+ULTRASONIC_TRIG = 14
+ULTRASONIC_ECHO = 15
 SERVO_PIN       = 17    # single servo for auto-lid demo
 # SHT30 uses I2C (GPIO 2/3) shared with LCD — no extra pin needed
 

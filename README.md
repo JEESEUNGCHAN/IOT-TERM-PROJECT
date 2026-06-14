@@ -50,8 +50,8 @@ Ultrasonic Sensor ──► Camera (YOLO Inference)
 
 | Sensor | Pin (BCM) |
 |--------|-----------|
-| Ultrasonic TRIG | 23 |
-| Ultrasonic ECHO | 24 |
+| Ultrasonic TRIG | 14 |
+| Ultrasonic ECHO | 15 |
 | Servo (auto-lid) | 17 |
 | LCD SDA | GPIO 2 (I2C) |
 | LCD SCL | GPIO 3 (I2C) |
