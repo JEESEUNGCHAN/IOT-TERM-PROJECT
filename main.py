@@ -62,7 +62,7 @@ class SmartRecyclingSystem:
 
         print(f"[Detection] {info['label']} ({result['confidence']:.0%})")
         self.lcd.show_detection(info["label"], info["tip"])
-        self.servo.open_lid(category, hold_sec=5.0)
+        self.servo.open_lid(hold_sec=5.0)
 
         time.sleep(3)
         self.lcd.show_idle()

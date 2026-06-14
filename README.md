@@ -54,12 +54,7 @@ Ultrasonic Sensor ──► Camera (YOLO Inference)
 | Ultrasonic TRIG | 23 |
 | Ultrasonic ECHO | 24 |
 | DHT22 DATA | 4 |
-| Servo – Plastic | 17 |
-| Servo – Can | 18 |
-| Servo – Paper | 27 |
-| Servo – Glass | 22 |
-| Servo – Food | 10 |
-| Servo – General | 9 |
+| Servo (auto-lid) | 17 |
 | LCD SDA | GPIO2 (I2C) |
 | LCD SCL | GPIO3 (I2C) |
 
