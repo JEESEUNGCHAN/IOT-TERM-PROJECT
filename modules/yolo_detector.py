@@ -1,19 +1,21 @@
 import os
 import cv2
 import time
+from picamera2 import Picamera2
 from ultralytics import YOLO
-from config import MODEL_PATH, CONFIDENCE, FRAME_WIDTH, FRAME_HEIGHT, CAMERA_INDEX, YOLO_CLASS_MAP
+from config import MODEL_PATH, CONFIDENCE, FRAME_WIDTH, FRAME_HEIGHT, YOLO_CLASS_MAP
 
 
 class WasteDetector:
     def __init__(self):
-        # Use fine-tuned model if available, otherwise fall back to COCO pre-trained
         model_file = MODEL_PATH if os.path.exists(MODEL_PATH) else "yolov8n.pt"
         print(f"[YOLO] Loading model: {model_file}")
-        self._model  = YOLO(model_file)
-        self._cap    = cv2.VideoCapture(CAMERA_INDEX)
-        self._cap.set(cv2.CAP_PROP_FRAME_WIDTH,  FRAME_WIDTH)
-        self._cap.set(cv2.CAP_PROP_FRAME_HEIGHT, FRAME_HEIGHT)
+        self._model = YOLO(model_file)
+        self._cap = Picamera2()
+        self._cap.configure(self._cap.create_preview_configuration(
+            main={"size": (FRAME_WIDTH, FRAME_HEIGHT), "format": "RGB888"}
+        ))
+        self._cap.start()
 
     def _map_class(self, class_name: str) -> str:
         name = class_name.lower().strip()
@@ -23,8 +25,8 @@ class WasteDetector:
         return None
 
     def capture_frame(self):
-        ret, frame = self._cap.read()
-        return frame if ret else None
+        frame = self._cap.capture_array()
+        return cv2.cvtColor(frame, cv2.COLOR_RGB2BGR)
 
     def detect(self) -> dict | None:
         frame = self.capture_frame()
@@ -74,4 +76,4 @@ class WasteDetector:
         return last
 
     def cleanup(self):
-        self._cap.release()
+        self._cap.stop()

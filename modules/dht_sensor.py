@@ -7,7 +7,7 @@ import adafruit_sht31d
 class DHTSensor:
     def __init__(self):
         i2c = busio.I2C(board.SCL, board.SDA)
-        self._device = adafruit_sht31d.SHT31D(i2c)
+        self._device = adafruit_sht31d.SHT31D(i2c, address=0x45)
 
     def read(self) -> dict:
         try:
