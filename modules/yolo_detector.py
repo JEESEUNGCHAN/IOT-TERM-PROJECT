@@ -20,7 +20,7 @@ class WasteDetector:
         for key, category in YOLO_CLASS_MAP.items():
             if key in name:
                 return category
-        return "general"
+        return "plastic"   # default if class not in map
 
     def capture_frame(self):
         ret, frame = self._cap.read()
