@@ -38,14 +38,12 @@ WASTE_INFO = {
 
 # YOLO class name → category mapping
 YOLO_CLASS_MAP = {
-    "bottle":       "plastic",
-    "pet bottle":   "plastic",
-    "can":          "can",
-    "tin can":      "can",
-    "cup":          "can",
-    "vase":         "can",
-    "cardboard":    "paper",
-    "newspaper":    "paper",
-    "paper":        "paper",
-    "book":         "paper",
+    "can":                "can",
+    "pop tab":            "can",
+    "plastic bottle":     "plastic",
+    "plastic bag":        "plastic",
+    "plastic bottle cap": "plastic",
+    "cardboard":          "paper",
+    "paper":              "paper",
+    "drink carton":       "paper",
 }
