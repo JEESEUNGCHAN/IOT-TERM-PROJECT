@@ -47,9 +47,12 @@ class SmartRecyclingSystem:
             time.sleep(0.2)
 
     def _handle_waste_event(self):
-        self.lcd.show("Scanning...", "Hold item still")
-        print("[Detection] Object detected, running YOLO...")
+        self.lcd.show("Remove hand!", "Wait 5 sec...")
+        print("[Detection] Object detected, waiting 5s for hand removal...")
+        time.sleep(5)
 
+        self.lcd.show("Scanning...", "Please wait")
+        print("[Detection] Running YOLO...")
         result = self.detector.detect_stable(samples=3, interval=0.4)
 
         if result is None:
@@ -69,9 +72,10 @@ class SmartRecyclingSystem:
 
         print(f"[Detection] {info['label']} ({result['confidence']:.0%})")
         self.lcd.show_detection(info["label"], info["tip"])
+        print("[Servo] Opening lid in 3s...")
+        time.sleep(3)
         self.servo.open_lid(hold_sec=5.0)
 
-        time.sleep(3)
         self.lcd.show_idle()
 
     def _monitor_environment(self):
