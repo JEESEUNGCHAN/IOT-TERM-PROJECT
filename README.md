@@ -93,11 +93,12 @@ IOT-TERM-PROJECT/
 ├── config.py                # GPIO pins, thresholds, waste info
 ├── requirements.txt
 ├── modules/
-│   ├── ultrasonic.py        # Proximity sensing (HC-SR04)
-│   ├── dht_sensor.py        # Temperature/humidity (DHT22)
+│   ├── dht_sensor.py        # Temperature/humidity (SHT30)
 │   ├── lcd_display.py       # I2C LCD controller
-│   ├── yolo_detector.py     # YOLOv8 waste classification
+│   ├── mqtt_client.py       # MQTT Publisher client
 │   └── servo_control.py     # Automatic lid actuation (SG90)
+│   ├── ultrasonic.py        # Proximity sensing (HC-SR04)
+│   ├── yolo_detector.py     # YOLOv8 waste classification
 ├── models/                  # YOLO model weights (.pt)
 └── data/                    # Supplementary datasets
 ```
@@ -110,11 +111,13 @@ IOT-TERM-PROJECT/
 1. Ultrasonic sensor detects approach within 40 cm
 2. Camera captures frame → YOLOv8 inference (3-frame vote)
 3. LCD shows item name + disposal tip
-4. Servo opens bin lid for 5 seconds then closes
+4. Send inference data via MQTT
+5. Servo opens bin lid for 5 seconds then closes
 
 **Idle Mode** (no user)
 1. DHT22 measures temperature & humidity every 30 seconds
-2. LCD briefly shows environment status
+2. Send environmental data via MQTT
+3. LCD briefly shows environment status
 
 ---
 
@@ -123,6 +126,9 @@ IOT-TERM-PROJECT/
 | Feature | Description |
 |---------|-------------|
 | Auto-Lid Control | SG90 servo opens the bin lid automatically upon detection |
+| Data sharing via MQTT | Shared via MQTT and can be monitored on a web dashboard |
+| Multi-Frame Voting | Improving result reliability by analyzing multiple images |
+| Broader Waste Detection | Enabled the detection of various recyclable and non-recyclable materials. |
 
 ---
 
@@ -131,5 +137,7 @@ IOT-TERM-PROJECT/
 | Category | Disposal Tip |
 |----------|--------------|
 | Plastic | Remove cap & label |
+| Glass | Handle with care |
 | Can / Metal | Rinse before dispose |
 | Paper | Keep dry & flat |
+| General Waste | Non-recyclable waste |
