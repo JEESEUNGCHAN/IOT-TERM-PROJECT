@@ -2,8 +2,9 @@ import time
 import RPi.GPIO as GPIO
 from config import SERVO_PIN
 
-OPEN_DUTY  = 7.5   # ~90 degrees
-CLOSE_DUTY = 2.5   # ~0 degrees
+OPEN_DUTY  = 9.0   # ~90 degrees
+CLOSE_DUTY = 6.0   # ~0 degrees
+OPEN_SPEED = 0.5
 
 
 class ServoController:
@@ -16,7 +17,11 @@ class ServoController:
         time.sleep(0.5)
 
     def open_lid(self, hold_sec: float = 5.0):
-        self._pwm.ChangeDutyCycle(OPEN_DUTY)
+        pwm_state = CLOSE_DUTY
+        while pwm_state < OPEN_DUTY:
+            self._pwm.ChangeDutyCycle(pwm_state)
+            pwm_state += OPEN_SPEED
+            time.sleep(0.08)
         time.sleep(0.8)
         self._pwm.ChangeDutyCycle(0)
         time.sleep(hold_sec)
