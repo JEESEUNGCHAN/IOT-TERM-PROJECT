@@ -144,6 +144,57 @@
         "wires": [["ui_status"]]
     },
     {
+        "id": "ui_base",
+        "type": "ui_base",
+        "theme": {
+            "name": "theme-light",
+            "lightTheme": {
+                "default": "#0094CE",
+                "baseColor": "#0094CE",
+                "baseFont": "-apple-system,BlinkMacSystemFont,Segoe UI,Roboto,Oxygen-Sans,Ubuntu,Cantarell,Helvetica Neue,sans-serif",
+                "edited": false,
+                "reset": false
+            },
+            "darkTheme": {
+                "default": "#097479",
+                "baseColor": "#097479",
+                "baseFont": "-apple-system,BlinkMacSystemFont,Segoe UI,Roboto,Oxygen-Sans,Ubuntu,Cantarell,Helvetica Neue,sans-serif",
+                "edited": false
+            },
+            "themeState": {
+                "base-color": {"value": "#0094CE", "edited": false},
+                "page-titlebar-backgroundColor": {"value": "#0094CE", "edited": false},
+                "page-backgroundColor": {"value": "#fafafa", "edited": false},
+                "page-sidebar-backgroundColor": {"value": "#ffffff", "edited": false},
+                "group-textColor": {"value": "#1bbfff", "edited": false},
+                "group-borderColor": {"value": "#ffffff", "edited": false},
+                "group-backgroundColor": {"value": "#ffffff", "edited": false},
+                "widget-textColor": {"value": "#111111", "edited": false},
+                "widget-backgroundColor": {"value": "#0094ce", "edited": false},
+                "widget-borderColor": {"value": "#ffffff", "edited": false},
+                "base-font": {"value": "-apple-system,BlinkMacSystemFont,Segoe UI,Roboto,Oxygen-Sans,Ubuntu,Cantarell,Helvetica Neue,sans-serif"}
+            }
+        },
+        "site": {
+            "name": "Node-RED Dashboard",
+            "hideToolbar": "false",
+            "allowSwipe": "false",
+            "lockMenu": "false",
+            "allowTempTheme": "true",
+            "date": "Default",
+            "sizes": {"sx": 48, "sy": 48, "gx": 6, "gy": 6, "cx": 6, "cy": 6, "px": 0, "py": 0}
+        }
+    },
+    {
+        "id": "ui_tab",
+        "type": "ui_tab",
+        "name": "Smart Recycling",
+        "icon": "dashboard",
+        "order": 1,
+        "disp": true,
+        "link": "ui_base"
+    },
+    {
         "id": "ui_group_detection",
         "type": "ui_group",
         "name": "Detection",
@@ -162,14 +213,6 @@
         "disp": true,
         "width": "6",
         "collapse": false
-    },
-    {
-        "id": "ui_tab",
-        "type": "ui_tab",
-        "name": "Smart Recycling",
-        "icon": "dashboard",
-        "order": 1,
-        "disp": true
     },
     {
         "id": "ui_label",
