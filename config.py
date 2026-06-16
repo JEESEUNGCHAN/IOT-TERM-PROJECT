@@ -26,6 +26,10 @@ WASTE_INFO = {
         "label": "PLASTIC",
         "tip": "Remove cap & label",
     },
+    "glass": {
+        "label": "GLASS",
+        "tip": "Handle with care",
+    },
     "can": {
         "label": "CAN / METAL",
         "tip": "Rinse before dispose",
@@ -33,6 +37,10 @@ WASTE_INFO = {
     "paper": {
         "label": "PAPER",
         "tip": "Keep dry & flat",
+    },
+    "general": {
+        "label": "GENERAL",
+        "tip": "Non-recyclable waste",
     },
 }
 
@@ -43,7 +51,10 @@ YOLO_CLASS_MAP = {
     "plastic bottle":     "plastic",
     "plastic bag":        "plastic",
     "plastic bottle cap": "plastic",
+    "glass bottle":       "glass",
     "cardboard":          "paper",
     "paper":              "paper",
     "drink carton":       "paper",
+    "battery":            "general",
+    "null":               "general",
 }

@@ -22,7 +22,7 @@ class WasteDetector:
         for key, category in YOLO_CLASS_MAP.items():
             if key in name:
                 return category
-        return None
+        return "general"
 
     def capture_frame(self):
         frame = self._cap.capture_array()
@@ -43,8 +43,6 @@ class WasteDetector:
                 cls      = int(box.cls[0])
                 label    = self._model.names[cls]
                 category = self._map_class(label)
-                if category is None:
-                    continue                 # skip classes outside our 3 categories
                 if conf > best_conf:
                     best_conf = conf
                     best = {
