@@ -13,6 +13,13 @@ During standby, a **SHT30** sensor continuously tracks temperature and humidity 
 
 ---
 
+## Demo
+
+![Demo video](demo.webp)
+
+
+---
+
 ## System Architecture
 
 ```
