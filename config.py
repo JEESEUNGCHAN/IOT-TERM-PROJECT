@@ -49,7 +49,7 @@ YOLO_CLASS_MAP = {
     "can":                "can",
     "pop tab":            "can",
     "plastic bottle":     "plastic",
-    "plastic bag":        "plastic",
+    "plastic bag":        "general",
     "plastic bottle cap": "plastic",
     "glass bottle":       "glass",
     "cardboard":          "paper",
